@@ -40,8 +40,6 @@ void osMoveFile(const char *srcpath, const char *destpath)
     char *src_p = realpath(srcpath, NULL);
     char *dest_p = realpath(destpath, NULL);
 
-    printf("%s\n%s\n", src_p, dest_p);
-
     // moramo da proverimo da li su src_p i dest_p razliciti od NULL inace ce doci do Seg Fault kod strcmp
     check_error(src_p != NULL, "srcpath must be provided");
     // dest_p ce biti NULL ukoliko fajl na tom path-u ne postoji
