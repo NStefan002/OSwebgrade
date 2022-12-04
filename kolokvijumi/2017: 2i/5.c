@@ -37,7 +37,6 @@ unsigned osNumOfDaysFileModified(const char *fpath);
 void osMoveFile(const char *srcpath, const char *destpath);
 // [5]
 void osRecursiveSearch(const char *currpath, const char *destpath);
-bool madeInGivenDirectory(const char *given_dir, const char *backup_dir);
 
 int main(int argc, char **argv)
 {
