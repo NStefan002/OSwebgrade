@@ -29,7 +29,7 @@ int blocks = 0;
 int links = 0;
 int FIFOs = 0;
 int sockets = 0;
-int overall = 0;
+int total = 0;
 
 
 int count(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf);
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
     check_error(nftw(argv[1], &count, 50, FTW_PHYS) != -1, "nftw");
 
-    printf("%d %d %d %d %d %d %d %d\n", regs, dirs, chars, blocks, links, FIFOs, sockets, overall);
+    printf("%d %d %d %d %d %d %d %d\n", regs, dirs, chars, blocks, links, FIFOs, sockets, total);
 
     return 0;
 }
@@ -49,20 +49,20 @@ int count(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ft
 {
     if (S_ISREG(sb->st_mode))
         regs++;
-    if (S_ISDIR(sb->st_mode))
+    else if (S_ISDIR(sb->st_mode))
         dirs++;
-    if (S_ISCHR(sb->st_mode))
+    else if (S_ISCHR(sb->st_mode))
         chars++;
-    if (S_ISBLK(sb->st_mode))
+    else if (S_ISBLK(sb->st_mode))
         blocks++;
-    if (S_ISLNK(sb->st_mode))
+    else if (S_ISLNK(sb->st_mode))
         links++;
-    if (S_ISFIFO(sb->st_mode))
+    else if (S_ISFIFO(sb->st_mode))
         FIFOs++;
-    if (S_ISSOCK(sb->st_mode))
+    else if (S_ISSOCK(sb->st_mode))
         sockets++;
 
-    overall++;
+    total++;
     
     return 0;
 }
