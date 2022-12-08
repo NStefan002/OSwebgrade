@@ -76,4 +76,5 @@ void countRegFilesWithExt(const char *path, const char *ext, int *count)
 
     check_error(chdir("..") != -1, "chdir");
     check_error(errno != EBADF, "readdir");
+    closedir(dirp);
 }
