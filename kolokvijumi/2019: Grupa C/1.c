@@ -19,18 +19,18 @@
     } while (0)
 
 
-time_t absoluteDiff(const char *fpath1, const char *fpath2);
+time_t absoluteMtimeDiff(const char *fpath1, const char *fpath2);
 
 int main(int argc, char **argv)
 {
     check_error(argc == 3, "./1 file1 file2");
 
-    printf("%ld\n", absoluteDiff(argv[1], argv[2]));
+    printf("%ld\n", absoluteMtimeDiff(argv[1], argv[2]));
 
     return 0;
 }
 
-time_t absoluteDiff(const char *fpath1, const char *fpath2)
+time_t absoluteMtimeDiff(const char *fpath1, const char *fpath2)
 {
     struct stat file_info1, file_info2;
     check_error(stat(fpath1, &file_info1) != -1, "stat");
