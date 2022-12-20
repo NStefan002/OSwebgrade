@@ -40,15 +40,14 @@ int main(int argc, char **argv)
     check_error(-1 != sem_init(&(mem_block->inDataReady), 1, 1), "sem_init");
 
     unsigned n;
-    scanf("%d", &n);
+    scanf("%u", &n);
     mem_block->arrayLen = n;
 
-    float *arr = (float *)malloc(n * sizeof(float));
-    check_error(NULL != arr, "malloc");
     for (unsigned i = 0; i < n; i++)
     {
-        scanf("%f,", &arr[i]);
-        mem_block->array[i] = arr[i];
+        float elem;
+        scanf("%f,", &elem);
+        mem_block->array[i] = elem;
     }
 
     check_error(-1 != munmap(mem_block, sizeof(OsInputData)), "munmap");
