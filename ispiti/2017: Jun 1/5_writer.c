@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     check_error(-1 != sem_init(&(mem_block->inDataReady), 1, 1), "sem_init");
 
     unsigned n;
-    scanf("%d", &n);
+    scanf("%u", &n);
     mem_block->arrayLen = n;
 
     for (unsigned i = 0; i < n; i++)
