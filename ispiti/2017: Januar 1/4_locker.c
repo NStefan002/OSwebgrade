@@ -19,7 +19,7 @@
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 5, "./4 file_path a b lock_type(r/w)");
+    check_error(argc == 5, "./4_locker file_path a b lock_type(r/w)");
 
     off_t a = atol(argv[2]);
     off_t b = atol(argv[3]);
