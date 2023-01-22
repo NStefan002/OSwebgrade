@@ -37,17 +37,17 @@ char *read_month(struct tm *broken_time)
 {
     switch (broken_time->tm_mon)
     {
-        case 0: return "januar";
-        case 1: return "februar";
-        case 2: return "mart";
-        case 3: return "april";
-        case 4: return "maj";
-        case 5: return "jun";
-        case 6: return "jul";
-        case 7: return "avgust";
-        case 8: return "septembar";
-        case 9: return "oktobar";
-        case 10: return "novembar";
-        case 11: return "decembar";
+    case 0: return "januar";
+    case 1: return "februar";
+    case 2: return "mart";
+    case 3: return "april";
+    case 4: return "maj";
+    case 5: return "jun";
+    case 6: return "jul";
+    case 7: return "avgust";
+    case 8: return "septembar";
+    case 9: return "oktobar";
+    case 10: return "novembar";
+    case 11: return "decembar";
     }
 }
