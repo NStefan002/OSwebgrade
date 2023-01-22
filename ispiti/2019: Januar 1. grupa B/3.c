@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <pthread.h>
+#include <errno.h>
 #include <limits.h>
 #include <float.h>
 
@@ -14,6 +16,18 @@
             exit(EXIT_FAILURE);\
         }\
     } while (0)
+
+#define pthread_check_error(pthread_err, msg)\
+    do\
+    {\
+        int _pthread_err = pthread_err;\
+        if (_pthread_err > 0)\
+        {\
+            check_error(false, msg);\
+            errno = _pthread_err;\
+        }\
+    } while (0)
+    
 
 #define UNUSED(x) ((void)x)
 
@@ -68,7 +82,7 @@ int main(int argc, char **argv)
         args[i].num_of_vectors = m / k;
         args[i].vectors = vectors;
         args[i].n = n;
-        check_error(-1 != pthread_create(&thread_ids[i], 0, &thread_func, &args[i]), "pthread_create");
+        pthread_check_error(pthread_create(&thread_ids[i], 0, &thread_func, &args[i]), "pthread_create");
     }
     
     // racunanje globalnog maksimuma prikupljanjem povratnih vrednosti niti
@@ -77,7 +91,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < k; i++)
     {
         void *ret_val;
-        check_error(-1 != pthread_join(thread_ids[i], &ret_val), "pthread_join");
+        pthread_check_error(pthread_join(thread_ids[i], &ret_val), "pthread_join");
         
         THREAD_RETURN_VAL *ret = (THREAD_RETURN_VAL *)ret_val;
         if (global_max < ret->local_max)
