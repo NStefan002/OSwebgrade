@@ -62,7 +62,7 @@ int main(int argc, char **argv)
                 poziva mi cemo procitati drugu liniju prvog poziva, sto nam daje netacan rezultat. */
                 char *line = NULL;
                 size_t n = 0;
-                getline(&line, &n, rd_end_for_parrent);
+                getline(&line, &n, rd_end_for_parrent); // ignorisemo ovo ucitavanje
                 getline(&line, &n, rd_end_for_parrent);
                 int i;
                 for (i = 0; !isblank(line[i]); i++)
