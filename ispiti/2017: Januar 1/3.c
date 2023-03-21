@@ -29,7 +29,7 @@
     } while (0)
 
 
-typedef struct 
+typedef struct
 {
     // vrednost globalnog minimuma i mutex koji obezbedjuje sinhronizaciju
     float value;
@@ -51,7 +51,7 @@ void *thread_func(void *arg);
 
 int main(int argc, char **argv)
 {
-    check_error(2 == argc, "./3 file_path");    
+    check_error(2 == argc, "./3 file_path");
 
     FILE *f = fopen(argv[1], "r");
     check_error(NULL != f, "fopen");
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         mat[i] = (float *)malloc(m * sizeof(float));
         check_error(NULL != mat[i], "malloc");
     }
-    
+
     // ucitavanje matrice iz fajla
     for (int i = 0; i < n; i++)
     {
@@ -91,10 +91,10 @@ int main(int argc, char **argv)
     for (int i = 0; i < n; i++)
     {
         args[i].m = m;
-        args[i].row = mat[i];        
+        args[i].row = mat[i];
         pthread_check_error(pthread_create(&thread_ids[i], NULL, &thread_func, &args[i]), "pthread_create");
     }
-    
+
     // cekamo sve niti da se izvrse
     for (int i = 0; i < n; i++)
     {
@@ -139,6 +139,6 @@ void *thread_func(void *arg)
         global_min.value = local_min;
     }
     pthread_check_error(pthread_mutex_unlock(&global_min.lock), "mutex_unlock");
-    
+
     return NULL;
 }

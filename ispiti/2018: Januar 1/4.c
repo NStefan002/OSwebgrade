@@ -27,7 +27,7 @@ char *fifo_name(char *fifo_path);
 
 int main(int argc, char **argv)
 {
-    check_error(argc >= 2, "./4 fifo1 fifo2 ...");
+    check_error(2 <= argc, "./4 fifo1 fifo2 ...");
 
     int num_of_fifos = argc - 1;
     struct pollfd *fifo_monitors = (struct pollfd *)calloc(num_of_fifos, sizeof(struct pollfd));
@@ -48,19 +48,19 @@ int main(int argc, char **argv)
         streams[i] = fdopen(fifo_monitors[i].fd, "r");
         check_error(NULL != streams[i], "fdopen");
     }
-    
+
     int num_of_opened_fds = num_of_fifos;
     while (num_of_opened_fds)
     {
         check_error(-1 != poll(fifo_monitors, num_of_fifos, -1), "poll");
- 
+
         for (int i = 0; i < num_of_fifos; i++)
         {
             if (fifo_monitors[i].revents & POLLIN)
             {
                 while (EOF != fscanf(streams[i], "%*c"))
                 {
-                    bytes_read[i]++;      
+                    bytes_read[i]++;
                 }
             }
             else if (fifo_monitors[i].revents & (POLLERR | POLLHUP))
@@ -82,10 +82,10 @@ int main(int argc, char **argv)
         if (max < bytes_read[i])
         {
             max_fifo = argv[i + 1];
-            max = bytes_read[i];   
+            max = bytes_read[i];
         }
     }
-    
+
     printf("%s\n", max_fifo);
 
     free(bytes_read);
@@ -103,4 +103,4 @@ char *fifo_name(char *fifo_path)
     {
         return name + 1;
     }
-}       
+}

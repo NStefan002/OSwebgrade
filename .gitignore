@@ -1,0 +1,18 @@
+# Primeri za ulaz/izlaz
+*.txt
+*.in
+*.out
+*.pdf
+*.odb
+*dir*
+
+# .out fajlovi
+1
+2
+3
+4
+5
+
+# VSC fajlovi
+.vscode/*
+.swp

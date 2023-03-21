@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     check_error(-1 != pipe(pipefds), "pipe");
 
     pid_t child_pid = fork();
-    check_error(-1 != child_pid, "fork");
+    check_error((pid_t)-1 != child_pid, "fork");
 
     if (0 == child_pid) // child
     {
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         {
             file_not_found = true;
         }
-        else 
+        else
         {
             printf("%d\n", n);
         }
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
         if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS || file_not_found)
         {
-            printf("Neuspeh\n");   
+            printf("Neuspeh\n");
         }
         check_error(-1 != fclose(f_rd_end), "fclose");
     }

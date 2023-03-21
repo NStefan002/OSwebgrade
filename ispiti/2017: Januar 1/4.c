@@ -19,7 +19,7 @@
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 4, "./4 file_path a b");
+    check_error(4 == argc, "./4 file_path a b");
 
     off_t a = atol(argv[2]);
     off_t b = atol(argv[3]);
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     {
         printf("exclusive lock\n");
     }
-    
+
     check_error(-1 != close(fd), "close");
 
     return 0;

@@ -20,7 +20,7 @@
 
 #define ARRAY_MAX (1024)
 
-typedef struct 
+typedef struct
 {
     sem_t inDataReady;
     float array[ARRAY_MAX]; // ARRAY_MAX = 1024
@@ -33,7 +33,7 @@ int compare(const void *a, const void *b);
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 2, "./5 shared_mem_path");
+    check_error(2 == argc, "./5 shared_mem_path");
 
     size_t size = 0;
     OsInputData *mem_block = (OsInputData *)get_mem_block(argv[1], &size);

@@ -21,7 +21,7 @@
         }\
     } while (0)
 
-typedef struct 
+typedef struct
 {
     sem_t inDataReady;
     float array[ARRAY_MAX];
@@ -33,15 +33,15 @@ void *get_mem_block(const char *shm_path, size_t *size);
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 2, "./5 shm_path");
+    check_error(2 == argc, "./5 shm_path");
 
     size_t size;
     OsInputData *mem_block = (OsInputData *)get_mem_block(argv[1], &size);
 
     check_error(-1 != sem_wait(&(mem_block->inDataReady)), "sem_wait");
-    
+
     /* pogledati kako se racuna standardna devijacija */
-    
+
     float arithmetic_mean = 0.0;
     for (unsigned i = 0; i < mem_block->arrayLen; i++)
     {
@@ -77,6 +77,6 @@ void *get_mem_block(const char *shm_path, size_t *size)
     check_error(MAP_FAILED != addr, "mmap");
 
     check_error(-1 != close(shmfd), "close");
-    
+
     return addr;
 }

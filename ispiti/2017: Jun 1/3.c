@@ -27,11 +27,11 @@
             check_error(false, msg);\
         }\
     } while (0)
-    
+
 
 #define UNUSED(x) ((void)x)
 
-typedef struct 
+typedef struct
 {
     // vrednost globalnog maksimuma i mutex koji obezbedjuje sinhronizaciju
     int value;
@@ -88,14 +88,14 @@ int main(int argc, char **argv)
         check_error(NULL != thread_ids[i], "malloc");
     }
 
-    THREAD_ARGS **args = (THREAD_ARGS **)malloc(N * sizeof(THREAD_ARGS *));   
+    THREAD_ARGS **args = (THREAD_ARGS **)malloc(N * sizeof(THREAD_ARGS *));
     check_error(NULL != args, "malloc");
     for (int i = 0; i < N; i++)
     {
         args[i] = (THREAD_ARGS *)malloc(K * sizeof(THREAD_ARGS));
         check_error(NULL != args[i], "malloc");
     }
-    
+
     global_max.value = INT_MIN;
     for (int i = 0; i < N; i++)
     {
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
             pthread_check_error(pthread_create(&thread_ids[i][j], NULL, &thread_func, &args[i][j]), "pthread_create");
         }
     }
-    
+
     // cekamo da se sve niti izvrse
     for (int i = 0; i < N; i++)
     {
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 
     print_matrix(res_mat, N, K);
     printf("%d\n", global_max.value);
-    
+
     // oslobadjamo svu alociranu memoriju
     free_matrix(mat_NxM, N);
     free_matrix(mat_MxK, M);
@@ -153,7 +153,7 @@ void *thread_func(void *arg)
         global_max.value = local_res;
     }
     pthread_check_error(pthread_mutex_unlock(&global_max.lock), "mutex_unlock");
-    
+
     return NULL;
 }
 
@@ -167,7 +167,7 @@ int **alocate_matrix(int n, int m)
         mat[i] = (int *)malloc(m * sizeof(int));
         check_error(NULL != mat[i], "malloc");
     }
-    
+
     return mat;
 }
 

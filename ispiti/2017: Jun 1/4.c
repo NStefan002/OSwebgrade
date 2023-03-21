@@ -29,11 +29,11 @@ bool string_is_number(char *str);
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 2, "./4 file_path");    
+    check_error(2 == argc, "./4 file_path");
 
     FILE *f = fopen(argv[1], "r");
     check_error(NULL != f, "fopen");
-    
+
     int fd = fileno(f);
     check_error(-1 != fd, "fileno");
 
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
         {
             continue;
         }
-        
+
         size_t word_len = strlen(word);
         lock.l_type = F_RDLCK;
         lock.l_whence = SEEK_SET;
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     lock.l_whence = SEEK_SET;
     lock.l_start = 0;
     lock.l_len = 0; // ! ukoliko je postavljeno na nulu cita do EOF-a
-    
+
     check_error(-1 != fcntl(fd, F_SETLK, &lock), "fcntl");
     // fclose ce zatvoriti i fd pa nema potrebe da zovemo close()
     check_error(-1 != fclose(f), "fclose");
@@ -89,7 +89,7 @@ bool string_is_number(char *str)
 {
     char *endptr = str;
     double num = strtod(str, &endptr);
-    
+
     // * man strtod
     return (str != endptr && *endptr == '\0');
 }

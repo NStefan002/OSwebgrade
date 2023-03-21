@@ -23,13 +23,13 @@
 
 int main(int argc, char **argv)
 {
-    check_error(argc == 2, "./2 file_path");
+    check_error(2 == argc, "./2 file_path");
 
     int pipefds[2];
     check_error(-1 != pipe(pipefds), "pipe");
 
     pid_t child_pid = fork();
-    check_error(-1 != child_pid, "fork");
+    check_error((pid_t)-1 != child_pid, "fork");
 
     if (child_pid == 0) // child
     {
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     }
 
     // parent
-    
+
     /* Preusmeravamo stdin na read end pipe-a od roditelja, da bi roditelj
     mogao da formatirano cita koriscenjem scanf-a (drugo resenje je koriscenje
     funkcija fdopen i fscanf). */
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     printf("%lu\n", size);
 
     check_error(-1 != close(pipefds[RD_END]), "close");
-    
+
     // cekamo dete da ne bismo pravili zombije
     int status = 0;
     check_error((pid_t)-1 != wait(&status), "wait");
