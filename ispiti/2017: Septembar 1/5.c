@@ -49,6 +49,8 @@ int main(int argc, char **argv)
 
     putchar('\n');
 
+    check_error(-1 != munmap(mem_block, size), "munmap");
+
     return 0;
 }
 
