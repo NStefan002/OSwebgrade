@@ -25,10 +25,10 @@
 
 #define MAX_EVENTS (10)
 
-typedef struct 
+typedef struct
 {
     FILE *f;
-    int index;
+    double sum;
 } EPOLL_DATA;
 
 int main(int argc, char **argv)
@@ -49,27 +49,26 @@ int main(int argc, char **argv)
         memset(&current_event, 0, sizeof(struct epoll_event));
         current_event.events = EPOLLIN;
 
-        current_event.data.fd = open(argv[i + 1], O_RDONLY | O_NONBLOCK);
-        check_error(-1 != current_event.data.fd, "open");
+        int fd = open(argv[i + 1], O_RDONLY | O_NONBLOCK);
+        check_error(-1 != fd, "open");
 
-        fifo_data[i].f = fdopen(current_event.data.fd, "r");
+        fifo_data[i].f = fdopen(fd, "r");
         check_error(NULL != fifo_data[i].f, "fdopen");
-        fifo_data[i].index = i;
+
+        current_event.data.fd = fd;
 
         current_event.data.ptr = &fifo_data[i];
 
-        check_error(-1 != epoll_ctl(epoll_fd, EPOLL_CTL_ADD, current_event.data.fd, &current_event), "epoll_ctl");
+        check_error(-1 != epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &current_event), "epoll_ctl");
     }
 
-    double max = -DBL_MAX;
-    char *max_fifo = NULL;
     struct epoll_event ready_fifos[MAX_EVENTS];
     int num_of_fifos_cp = num_of_fifos;
     while (num_of_fifos_cp)
     {
-        int num_of_ready_fifos;
+        int num_of_ready_fifos = epoll_wait(epoll_fd, ready_fifos, MAX_EVENTS, -1);
         // * man epoll_wait
-        check_error(-1 != (num_of_ready_fifos = epoll_wait(epoll_fd, ready_fifos, MAX_EVENTS, -1)), "epoll_wait");   
+        check_error(-1 != num_of_ready_fifos, "epoll_wait");
 
         for (int i = 0; i < num_of_ready_fifos; i++)
         {
@@ -77,15 +76,9 @@ int main(int argc, char **argv)
             if (ready_fifos[i].events & EPOLLIN)
             {
                 double x;
-                double sum = 0.0;
                 while (1 == fscanf(curr->f, "%lf", &x))
                 {
-                    sum += x;
-                }
-                if (max < sum)
-                {
-                    max = sum;
-                    max_fifo = argv[curr->index + 1];
+                    curr->sum += x;
                 }
             }
             else if (ready_fifos[i].events & (EPOLLHUP | EPOLLERR))
@@ -96,15 +89,22 @@ int main(int argc, char **argv)
         }
     }
 
+    double max_sum = fifo_data[0].sum;
+    char *max_fifo = argv[1];
+
+    for (int i = 1; i < num_of_fifos; i++)
+    {
+        if (max_sum < fifo_data[i].sum)
+        {
+            max_sum = fifo_data[i].sum;
+            max_fifo = argv[i + 1];
+        }
+    }
+
     printf("%s\n", max_fifo);
 
     check_error(-1 != close(epoll_fd), "close");
-    for (int i = 0; i < num_of_fifos; i++)
-    {
-        check_error(-1 != fclose(fifo_data[i].f), "fclose");
-    }
-    
-    free(fifo_data);
+    free(fifo_data); fifo_data = NULL;
 
     return 0;
 }

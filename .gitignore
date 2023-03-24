@@ -5,6 +5,7 @@
 *.pdf
 *.odb
 *dir*
+*fifo*
 
 # .out fajlovi
 1
