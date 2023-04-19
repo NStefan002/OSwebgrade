@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#define MAX_LEN (256)
+
 #define check_error(cond, msg)\
     do\
     {\
@@ -20,37 +22,59 @@
 #define RD_END (0)
 #define WR_END (1)
 
-#define MAX_LINE (256)
-#define MAX_COMMAND_OUTPUT (4094)
 
 int main(int argc, char **argv)
 {
     check_error(2 == argc, "./4 commands_file");
 
-    FILE *commands_file = fopen(argv[1], "r");
-    check_error(NULL != commands_file, "fopen");
+    FILE *f = fopen(argv[1], "r");
+    check_error(NULL != f, "fopen");
 
-    int pipe_fds[2];
-    check_error(-1 != pipe(pipe_fds), "pipe");
+    FILE *err = fopen("errors.txt", "w");
+    check_error(NULL != err, "fopen");
 
-    FILE *rd_end_for_parent = fdopen(pipe_fds[RD_END], "r");
-    check_error(NULL != rd_end_for_parent, "fdopen");
+    char command[MAX_LEN], argument[MAX_LEN];
 
-    char line[MAX_LINE];
-    size_t n = MAX_LINE;
-
-    while (-1 != getline(&line, &n, commands_file))
+    while (2 == fscanf(f, "%s%s", command, argument))
     {
+        int pipefds[2];
+        check_error(-1 != pipe(pipefds), "pipe");
+
         pid_t child_pid = fork();
+        check_error((pid_t)-1 != child_pid, "fork");
+
         if (0 == child_pid) // child
         {
-            check_error(-1 != fclose(rd_end_for_parent), "fclose");
-
+            check_error(-1 != close(pipefds[RD_END]), "close");
+            check_error(-1 != dup2(pipefds[WR_END], STDERR_FILENO), "dup2");
+            check_error(-1 != execlp(command, command, argument, NULL), "execlp");
         }
+        else // parent
+        {
+            check_error(-1 != close(pipefds[WR_END]), "close");
 
+            FILE *child_to_parent = fdopen(pipefds[RD_END], "r");
+            check_error(NULL != child_to_parent, "fdopen");
+
+            char *buff = NULL;
+            size_t len = 0;
+
+            int status;
+            check_error(-1 != wait(&status), "wait");
+
+            if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS)
+            {
+                while (EOF != getline(&buff, &len, child_to_parent))
+                {
+                    fprintf(err, "%s", buff);
+                }
+                free(buff);
+            }
+        }
     }
 
-    check_error(-1 != fclose(commands_file), "fclose");
+    check_error(-1 != fclose(f), "fclose");
+    check_error(-1 != fclose(err), "fclose");
 
     return 0;
 }
