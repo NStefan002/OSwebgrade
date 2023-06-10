@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <semaphore.h>
@@ -49,12 +50,12 @@ int main(int argc, char **argv)
             out_data->array[out_data->arrayLen++] = in_data->array[i];
         }
     }
-    
+
     check_error(-1 != sem_init(&(out_data->inDataReady), 1, 1), "sem_init");
-    
+
     check_error(-1 != munmap(in_data, size), "munmap");
     check_error(-1 != munmap(out_data, size), "munmap");
-    
+
     return 0;
 }
 
@@ -66,8 +67,8 @@ unsigned num_of_1s(int x)
     while (mask)
     {
         if (x & mask) n++;
-        
-        mask >>= 1; 
+
+        mask >>= 1;
     }
 
     return n;
